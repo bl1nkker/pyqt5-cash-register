@@ -9,31 +9,34 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QAction, QFileDialog
-from PyQt5.QtGui import QIcon, QImage, QPainter, QPen
-from PyQt5.QtCore import Qt, QPoint
 
 
 class Ui_MainWindow(object):
-
     def setupUi(self, MainWindow):
-        self.num_of_fields = 1
+        self.num_of_lines = 1
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        # First button
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(450, 490, 75, 23))
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.clicked.connect(lambda x: self.add_field(MainWindow))
-        # Second button
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(350, 490, 75, 23))
+        self.pushButton.setGeometry(QtCore.QRect(380, 480, 75, 23))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.clicked.connect(self.read_values)
-        QtWidgets.QLineEdit(self.centralwidget).setGeometry(QtCore.QRect(40, 20, 113, 20))
-        # self.lineEdit.setObjectName("lineEdit")
+        self.pushButton.clicked.connect(self.add_field)
+        self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.formLayoutWidget.setGeometry(QtCore.QRect(140, 90, 211, 400))
+        self.formLayoutWidget.setObjectName("formLayoutWidget")
+        self.formLayout = QtWidgets.QFormLayout(self.formLayoutWidget)
+        self.formLayout.setContentsMargins(0, 0, 0, 0)
+        self.formLayout.setObjectName("formLayout")
+
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLineEdit(self.formLayoutWidget))
+        self.spinBox = QtWidgets.QSpinBox(self.formLayoutWidget)
+        self.spinBox.setObjectName("spinBox")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.spinBox)
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(290, 480, 75, 23))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.clicked.connect(self.read_values)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -47,29 +50,27 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def add_field(self, MainWindow):
-        self.num_of_fields += 1
-        QtWidgets.QLineEdit(self.centralwidget).setGeometry(QtCore.QRect(40, 80, 113, 20))
-        # self.centralwidget.update()
-        MainWindow.label_Screen.setText("HOME")
-        MainWindow.layout.addWidget(self.centralwidget)
+        # TODO: Add spin boxes
+        self.formLayout.setWidget(self.num_of_lines, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLineEdit(self.formLayoutWidget))
+        self.num_of_lines += 1
 
 
 
     def read_values(self):
-        # print(f'Field number 1:', self.centralwidget.childAt(40, 20).text())
-        for i in range(1, self.num_of_fields):
-            print(f'Field number {i}:', self.centralwidget.childAt(40, 20 * i).text())
+        print(self.formLayout.rowCount())
+        # 0, 2, 4 - Line Edits
+        # 1, 3, 5 - Number Boxes
+        print(self.formLayout.itemAt(self.formLayout.rowCount() - 1).widget().text())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "Read values"))
-        self.pushButton_2.setText(_translate("MainWindow", "Add field"))
+        self.pushButton.setText(_translate("MainWindow", "Add field"))
+        self.pushButton_2.setText(_translate("MainWindow", "Read values"))
 
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
