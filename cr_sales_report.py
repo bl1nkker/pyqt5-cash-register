@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import timedelta, datetime
+import json
 
 
 # Helper functions
@@ -27,8 +28,8 @@ def filter_json(till_date, json_sales):
 
 class SalesReport_MainWindow(object):
     def __init__(self, json_items, json_sales):
-        self.json_items = json_items
-        self.json_sales = json_sales
+        self.json_items = list(json.load(open('cr_items_db.json')))
+        self.json_sales = list(json.load(open('cr_sales_db.json')))
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
