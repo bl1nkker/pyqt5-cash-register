@@ -12,9 +12,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import json
 
 
-class Ui_MainWindow(object):
-    def __init__(self):
+class CashRegister_MainWindow(object):
+    def __init__(self, json_items, json_sales):
         self.is_calculate_pressed = False
+        self.json_items = json_items
+        self.json_sales = json_sales
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -52,7 +54,7 @@ class Ui_MainWindow(object):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        self.comboBox.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
+        self.comboBox.addItems(list(map(lambda item: item['name'], self.json_items)))
         self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.comboBox)
 
         # Spin Box
@@ -88,7 +90,7 @@ class Ui_MainWindow(object):
         # Items List
         self.itemsList = QtWidgets.QListWidget(self.centralwidget)
         self.itemsList.setObjectName("itemsList")
-        self.itemsList.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
+        self.itemsList.addItems(list(map(lambda item: item['name'], self.json_items)))
         self.verticalLayout.addWidget(self.itemsList)
 
         self.horizontalLayout.addLayout(self.verticalLayout)
@@ -107,7 +109,7 @@ class Ui_MainWindow(object):
         # Prices List
         self.pricesList = QtWidgets.QListWidget(self.centralwidget)
         self.pricesList.setObjectName("pricesList")
-        self.pricesList.addItems(list(map(lambda item: str(item['price']), JSON_ITEMS)))
+        self.pricesList.addItems(list(map(lambda item: str(item['price']), self.json_items)))
         self.verticalLayout_2.addWidget(self.pricesList)
 
         self.horizontalLayout.addLayout(self.verticalLayout_2)
@@ -146,7 +148,7 @@ class Ui_MainWindow(object):
     def add_field(self):
         current_row = self.formLayout_2.rowCount()
         new_combo_box = QtWidgets.QComboBox(self.centralwidget)
-        new_combo_box.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
+        new_combo_box.addItems(list(map(lambda item: item['name'], self.json_items)))
 
         new_spin_box = QtWidgets.QSpinBox(self.centralwidget)
         self.formLayout_2.setWidget(current_row, QtWidgets.QFormLayout.LabelRole,
@@ -174,7 +176,7 @@ class Ui_MainWindow(object):
             # Calculate total price + add all items to the list
             for i in range(self.formLayout_2.rowCount()):
                 item = next(
-                    (x for x in JSON_ITEMS if x['name'] == self.formLayout_2.itemAt(i * 2).widget().currentText()),
+                    (x for x in self.json_items if x['name'] == self.formLayout_2.itemAt(i * 2).widget().currentText()),
                     None)
                 total_price += item['price'] * int(self.formLayout_2.itemAt(i * 2 + 1).widget().text())
                 items.append({"id": item["id"], "amount": int(self.formLayout_2.itemAt(i * 2 + 1).widget().text())})
@@ -187,9 +189,9 @@ class Ui_MainWindow(object):
             }
 
             # Rewrite JSON file
-            JSON_SALES.append(sale_instance)
+            self.json_sales.append(sale_instance)
             with open("cr_sales_db.json", "w") as f:
-                json.dump(JSON_SALES, f)
+                json.dump(self.json_sales, f)
 
             # Set totalLabel text
             self.totalLabel.setText(f'Total price: {total_price}')
@@ -205,14 +207,14 @@ class Ui_MainWindow(object):
         self.totalLabel.setText(_translate("MainWindow", "Total price: "))
 
 
-if __name__ == "__main__":
-    import sys
-
-    JSON_ITEMS = list(json.load(open('cr_items_db.json')))
-    JSON_SALES = list(json.load(open('cr_sales_db.json')))
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#
+#     JSON_ITEMS = list(json.load(open('cr_items_db.json')))
+#     JSON_SALES = list(json.load(open('cr_sales_db.json')))
+#     app = QtWidgets.QApplication(sys.argv)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = CashRegister_MainWindow(JSON_ITEMS, JSON_SALES)
+#     ui.setupUi(MainWindow)
+#     MainWindow.show()
+#     sys.exit(app.exec_())
