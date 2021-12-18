@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'cr_cash_register_screen.ui'
+# Form implementation generated from reading ui file 'cr_sales_report_screen.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -9,68 +9,110 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from datetime import timedelta, datetime
 import json
 
 
-class Ui_MainWindow(object):
+# Helper functions
+def filter_json(till_date, json_sales):
+    # Format to python datetime
+    selected_date = datetime.strptime(till_date, '%m-%d-%Y') - timedelta(days=31)
+    result_array = []
+    for obj in json_sales:
+        # Only object, that have date before selected
+        if obj['date'] <= str(selected_date):
+            result_array.append(obj)
+    return result_array
+
+
+class SalesReport_MainWindow(object):
+    def __init__(self, json_items, json_sales):
+        self.json_items = json_items
+        self.json_sales = json_sales
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(543, 530)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(380, 480, 75, 23))
-        self.pushButton.setObjectName("pushButton")
-        self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.formLayoutWidget.setGeometry(QtCore.QRect(80, 70, 111, 301))
-        self.formLayoutWidget.setObjectName("formLayoutWidget")
-        self.formLayout_2 = QtWidgets.QFormLayout(self.formLayoutWidget)
-        self.formLayout_2.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_2.setLabelAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.formLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.formLayout_2.setObjectName("formLayout_2")
-        self.comboBox = QtWidgets.QComboBox(self.formLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
-        self.comboBox.setSizePolicy(sizePolicy)
-        self.comboBox.setObjectName("comboBox")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.comboBox)
-        self.spinBox = QtWidgets.QSpinBox(self.formLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBox.sizePolicy().hasHeightForWidth())
-        self.spinBox.setSizePolicy(sizePolicy)
-        self.spinBox.setObjectName("spinBox")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.spinBox)
-        self.comboBox_2 = QtWidgets.QComboBox(self.formLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBox_2.sizePolicy().hasHeightForWidth())
-        self.comboBox_2.setSizePolicy(sizePolicy)
-        self.comboBox_2.setObjectName("comboBox_2")
-        self.comboBox.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
-        self.comboBox_2.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.comboBox_2)
-        self.spinBox_2 = QtWidgets.QSpinBox(self.formLayoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBox_2.sizePolicy().hasHeightForWidth())
-        self.spinBox_2.setSizePolicy(sizePolicy)
-        self.spinBox_2.setObjectName("spinBox_2")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.spinBox_2)
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(290, 480, 75, 23))
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton.clicked.connect(self.add_field)
-        self.pushButton_2.clicked.connect(self.read_values)
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.calendarWidget = QtWidgets.QCalendarWidget(self.centralwidget)
+        self.calendarWidget.setObjectName("calendarWidget")
+        self.verticalLayout_5.addWidget(self.calendarWidget)
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.dateLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.dateLabel.setFont(font)
+        self.dateLabel.setObjectName("dateLabel")
+        self.verticalLayout_4.addWidget(self.dateLabel)
+        self.totalLabel = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.totalLabel.setFont(font)
+        self.totalLabel.setObjectName("totalLabel")
+        self.verticalLayout_4.addWidget(self.totalLabel)
+        self.verticalLayout_5.addLayout(self.verticalLayout_4)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        self.itemsList = QtWidgets.QListWidget(self.centralwidget)
+        self.itemsList.setObjectName("itemsList")
+        self.verticalLayout.addWidget(self.itemsList)
+        self.horizontalLayout.addLayout(self.verticalLayout)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout_2.addWidget(self.label_2)
+        self.amountList = QtWidgets.QListWidget(self.centralwidget)
+        self.amountList.setObjectName("amountList")
+        self.verticalLayout_2.addWidget(self.amountList)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_3.setFont(font)
+        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_3.setObjectName("label_3")
+        self.verticalLayout_3.addWidget(self.label_3)
+        self.totalList = QtWidgets.QListWidget(self.centralwidget)
+        self.totalList.setObjectName("totalList")
+        self.verticalLayout_3.addWidget(self.totalList)
+        self.horizontalLayout.addLayout(self.verticalLayout_3)
+        self.verticalLayout_5.addLayout(self.horizontalLayout)
+        self.closeButton = QtWidgets.QPushButton(self.centralwidget)
+        self.closeButton.setObjectName("closeButton")
+        self.verticalLayout_5.addWidget(self.closeButton)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 543, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -80,41 +122,46 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def add_field(self):
-        # TODO: Add spin boxes
-        index = self.formLayout_2.rowCount()
-        new_combo = QtWidgets.QComboBox(self.formLayoutWidget)
-        new_combo.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
+    def show_date_related_data(self, q_date):
+        # When user clicks -> global variable changes
+        till_date = '{0}-{1}-{2}'.format(q_date.month(), q_date.day(), q_date.year())
+        print('Date:', till_date)
 
-        new_spin = QtWidgets.QSpinBox(self.formLayoutWidget)
-        self.formLayout_2.setWidget(index, QtWidgets.QFormLayout.LabelRole,
-                                    new_combo)
-        self.formLayout_2.setWidget(index, QtWidgets.QFormLayout.FieldRole,
-                                    new_spin)
+        # Set label text
+        self.dateLabel.setText(f'Date: {till_date}')
 
+        # Get filtered array
+        required_data = filter_json(till_date, self.json_sales)
 
-    def read_values(self):
-        # 0, 2, 4 - Line Edits
-        # 1, 3, 5 - Number Boxes
-        for i in range(self.formLayout_2.rowCount() * 2):
-            if i % 2 == 0:
-                print('Label', self.formLayout_2.itemAt(i).widget().currentText())
-            else:
-                print('Field', self.formLayout_2.itemAt(i).widget().text())
+        # Show filtered data in the table
+        print('Data: ', required_data)
+
+        # # Create overall array
+        # overall_total = {'overall_income': 0, 'overall_outcome': 0, 'overall_total': 0}
+        # for obj in required_data:
+        #     overall_total += int(obj[''])
+        #
+        # # Show overall in the table
+        # print('Overall total:', overall_total)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "Add field"))
-        self.pushButton_2.setText(_translate("MainWindow", "Read values"))
+        self.dateLabel.setText(_translate("MainWindow", "Date:"))
+        self.totalLabel.setText(_translate("MainWindow", "Total:"))
+        self.label.setText(_translate("MainWindow", "Items"))
+        self.label_2.setText(_translate("MainWindow", "Amount"))
+        self.label_3.setText(_translate("MainWindow", "Total"))
+        self.closeButton.setText(_translate("MainWindow", "Close"))
 
-
-if __name__ == "__main__":
-    import sys
-
-    JSON_ITEMS = list(json.load(open('cr_items_db.json')))
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#
+#     JSON_ITEMS = list(json.load(open('cr_items_db.json')))
+#     JSON_SALES = list(json.load(open('cr_sales_db.json')))
+#     app = QtWidgets.QApplication(sys.argv)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = SalesReport_MainWindow(JSON_ITEMS, JSON_SALES)
+#     ui.setupUi(MainWindow)
+#     MainWindow.show()
+#     sys.exit(app.exec_())

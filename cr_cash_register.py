@@ -198,7 +198,7 @@ class CashRegister_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Cash Register"))
         self.label_4.setText(_translate("MainWindow", "Choose your items"))
         self.addFieldButton.setText(_translate("MainWindow", "Add field"))
         self.label.setText(_translate("MainWindow", "Available Items"))

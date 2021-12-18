@@ -10,21 +10,23 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import timedelta, datetime
+import json
 
 
 # Helper functions
 def filter_json(till_date, json_sales):
     # Format to python datetime
-    selected_date = datetime.strptime(till_date, '%m-%d-%Y') - timedelta(days=31)
+    start_date = datetime.strptime(till_date, '%m-%d-%Y') - timedelta(days=1)
+    end_date = datetime.strptime(till_date, '%m-%d-%Y')
     result_array = []
     for obj in json_sales:
         # Only object, that have date before selected
-        if obj['date'] <= str(selected_date):
+        if str(end_date) > obj['date'] > str(start_date):
             result_array.append(obj)
     return result_array
 
 
-class Ui_MainWindow(object):
+class SalesReport_MainWindow(object):
     def __init__(self, json_items, json_sales):
         self.json_items = json_items
         self.json_sales = json_sales
@@ -36,9 +38,13 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
+
+        # Calendar Widget
         self.calendarWidget = QtWidgets.QCalendarWidget(self.centralwidget)
         self.calendarWidget.setObjectName("calendarWidget")
+        self.calendarWidget.clicked.connect(self.show_date_related_data)
         self.verticalLayout_5.addWidget(self.calendarWidget)
+
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.dateLabel = QtWidgets.QLabel(self.centralwidget)
@@ -108,6 +114,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addLayout(self.horizontalLayout)
         self.closeButton = QtWidgets.QPushButton(self.centralwidget)
         self.closeButton.setObjectName("closeButton")
+        self.closeButton.clicked.connect(lambda x: self.close_window(MainWindow))
         self.verticalLayout_5.addWidget(self.closeButton)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -131,16 +138,34 @@ class Ui_MainWindow(object):
         # Get filtered array
         required_data = filter_json(till_date, self.json_sales)
 
-        # Show filtered data in the table
-        print(required_data)
+        # Filter unic items
+        items_n_amounts = {}
+        items_n_totals = {}
+        for obj in required_data:
+            for item in obj['items']:
+                existing_item = next(
+                    (x for x in self.json_items if x['id'] == item['id']),
+                    None)
+                if existing_item['name'] in items_n_amounts:
+                    items_n_amounts[existing_item['name']] += item['amount']
+                    items_n_totals[existing_item['name']] += item['amount'] * existing_item['price']
+                else:
+                    items_n_amounts[existing_item['name']] = item['amount']
+                    items_n_totals[existing_item['name']] = item['amount'] * existing_item['price']
 
-        # # Create overall array
-        # overall_total = {'overall_income': 0, 'overall_outcome': 0, 'overall_total': 0}
-        # for obj in required_data:
-        #     overall_total += int(obj[''])
-        #
-        # # Show overall in the table
-        # print('Overall total:', overall_total)
+        # Show filtered data in the table
+        self.itemsList.clear()
+        self.amountList.clear()
+        self.totalList.clear()
+        self.itemsList.addItems(list(items_n_amounts.keys()))
+        self.amountList.addItems([str(i) for i in list(items_n_amounts.values())])
+        self.totalList.addItems([str(i) for i in list(items_n_totals.values())])
+
+        # Set total text label
+        self.totalLabel.setText(f'Total: {str(sum([i for i in list(items_n_totals.values())]))}')
+
+    def close_window(self, MainWindow):
+        MainWindow.close()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -156,9 +181,11 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     import sys
 
+    JSON_ITEMS = list(json.load(open('cr_items_db.json')))
+    JSON_SALES = list(json.load(open('cr_sales_db.json')))
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = SalesReport_MainWindow(JSON_ITEMS, JSON_SALES)
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
