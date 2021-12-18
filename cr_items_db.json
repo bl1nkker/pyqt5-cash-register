@@ -3,5 +3,25 @@
     "id": "item_1",
     "name": "Snickers",
     "price": 100
+  },
+  {
+    "id": "item_2",
+    "name": "Twix",
+    "price": 150
+  },
+  {
+    "id": "item_3",
+    "name": "Bounty",
+    "price": 200
+  },
+  {
+    "id": "item_4",
+    "name": "Skittles",
+    "price": 130
+  },
+  {
+    "id": "item_5",
+    "name": "Bread",
+    "price": 60
   }
 ]

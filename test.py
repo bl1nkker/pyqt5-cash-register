@@ -9,31 +9,65 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QAction, QFileDialog
-from PyQt5.QtGui import QIcon, QImage, QPainter, QPen
-from PyQt5.QtCore import Qt, QPoint
+import json
 
 
 class Ui_MainWindow(object):
-
     def setupUi(self, MainWindow):
-        self.num_of_fields = 1
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        # First button
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(450, 490, 75, 23))
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.clicked.connect(lambda x: self.add_field(MainWindow))
-        # Second button
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(350, 490, 75, 23))
+        self.pushButton.setGeometry(QtCore.QRect(380, 480, 75, 23))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.clicked.connect(self.read_values)
-        QtWidgets.QLineEdit(self.centralwidget).setGeometry(QtCore.QRect(40, 20, 113, 20))
-        # self.lineEdit.setObjectName("lineEdit")
+        self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.formLayoutWidget.setGeometry(QtCore.QRect(80, 70, 111, 301))
+        self.formLayoutWidget.setObjectName("formLayoutWidget")
+        self.formLayout_2 = QtWidgets.QFormLayout(self.formLayoutWidget)
+        self.formLayout_2.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout_2.setLabelAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.formLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.formLayout_2.setObjectName("formLayout_2")
+        self.comboBox = QtWidgets.QComboBox(self.formLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
+        self.comboBox.setSizePolicy(sizePolicy)
+        self.comboBox.setObjectName("comboBox")
+        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.comboBox)
+        self.spinBox = QtWidgets.QSpinBox(self.formLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBox.sizePolicy().hasHeightForWidth())
+        self.spinBox.setSizePolicy(sizePolicy)
+        self.spinBox.setObjectName("spinBox")
+        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.spinBox)
+        self.comboBox_2 = QtWidgets.QComboBox(self.formLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBox_2.sizePolicy().hasHeightForWidth())
+        self.comboBox_2.setSizePolicy(sizePolicy)
+        self.comboBox_2.setObjectName("comboBox_2")
+        self.comboBox.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
+        self.comboBox_2.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
+        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.comboBox_2)
+        self.spinBox_2 = QtWidgets.QSpinBox(self.formLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBox_2.sizePolicy().hasHeightForWidth())
+        self.spinBox_2.setSizePolicy(sizePolicy)
+        self.spinBox_2.setObjectName("spinBox_2")
+        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.spinBox_2)
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(290, 480, 75, 23))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton.clicked.connect(self.add_field)
+        self.pushButton_2.clicked.connect(self.read_values)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -46,30 +80,38 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def add_field(self, MainWindow):
-        self.num_of_fields += 1
-        QtWidgets.QLineEdit(self.centralwidget).setGeometry(QtCore.QRect(40, 80, 113, 20))
-        # self.centralwidget.update()
-        MainWindow.label_Screen.setText("HOME")
-        MainWindow.layout.addWidget(self.centralwidget)
+    def add_field(self):
+        # TODO: Add spin boxes
+        index = self.formLayout_2.rowCount()
+        new_combo = QtWidgets.QComboBox(self.formLayoutWidget)
+        new_combo.addItems(list(map(lambda item: item['name'], JSON_ITEMS)))
 
+        new_spin = QtWidgets.QSpinBox(self.formLayoutWidget)
+        self.formLayout_2.setWidget(index, QtWidgets.QFormLayout.LabelRole,
+                                    new_combo)
+        self.formLayout_2.setWidget(index, QtWidgets.QFormLayout.FieldRole,
+                                    new_spin)
 
 
     def read_values(self):
-        # print(f'Field number 1:', self.centralwidget.childAt(40, 20).text())
-        for i in range(1, self.num_of_fields):
-            print(f'Field number {i}:', self.centralwidget.childAt(40, 20 * i).text())
-
+        # 0, 2, 4 - Line Edits
+        # 1, 3, 5 - Number Boxes
+        for i in range(self.formLayout_2.rowCount() * 2):
+            if i % 2 == 0:
+                print('Label', self.formLayout_2.itemAt(i).widget().currentText())
+            else:
+                print('Field', self.formLayout_2.itemAt(i).widget().text())
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "Read values"))
-        self.pushButton_2.setText(_translate("MainWindow", "Add field"))
+        self.pushButton.setText(_translate("MainWindow", "Add field"))
+        self.pushButton_2.setText(_translate("MainWindow", "Read values"))
 
 
 if __name__ == "__main__":
     import sys
 
+    JSON_ITEMS = list(json.load(open('cr_items_db.json')))
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
