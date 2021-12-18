@@ -6,11 +6,12 @@ import sys
 
 # PyQT5
 MainScreenForm, MainScreenWindow = uic.loadUiType("a.ui")
+JSON_ITEMS = list(json.load(open('cr_items_db.json')))
+JSON_SALES = list(json.load(open('cr_sales_db.json')))
 
 
 def open_cash_register_screen():
-    JSON_ITEMS = list(json.load(open('cr_items_db.json')))
-    JSON_SALES = list(json.load(open('cr_sales_db.json')))
+
     CashRegister_MW = QtWidgets.QMainWindow()
     ui = CashRegister_MainWindow(JSON_ITEMS, JSON_SALES)
     ui.setupUi(CashRegister_MW)
