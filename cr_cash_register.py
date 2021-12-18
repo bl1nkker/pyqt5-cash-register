@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'cr_cash_register_screen.ui'
+# Form implementation generated from reading ui file '(deprecated)cr_cash_register_screen.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import json
+from datetime import date
 
 
 class CashRegister_MainWindow(object):
@@ -109,7 +110,7 @@ class CashRegister_MainWindow(object):
         # Prices List
         self.pricesList = QtWidgets.QListWidget(self.centralwidget)
         self.pricesList.setObjectName("pricesList")
-        self.pricesList.addItems(list(map(lambda item: str(item['price']), self.json_items)))
+        self.pricesList.addItems(list(map(lambda item: f"{item['price']}$", self.json_items)))
         self.verticalLayout_2.addWidget(self.pricesList)
 
         self.horizontalLayout.addLayout(self.verticalLayout_2)
@@ -181,9 +182,11 @@ class CashRegister_MainWindow(object):
                 total_price += item['price'] * int(self.formLayout_2.itemAt(i * 2 + 1).widget().text())
                 items.append({"id": item["id"], "amount": int(self.formLayout_2.itemAt(i * 2 + 1).widget().text())})
 
+            # 2021-10-01
+            today_date = date.today().strftime("%Y-%m-%d")
             # Create sales instance
             sale_instance = {
-                "date": "",
+                "date": today_date,
                 "items": items,
                 "total": total_price
             }
@@ -194,7 +197,7 @@ class CashRegister_MainWindow(object):
                 json.dump(self.json_sales, f)
 
             # Set totalLabel text
-            self.totalLabel.setText(f'Total price: {total_price}')
+            self.totalLabel.setText(f'Total price: {total_price}$')
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -206,15 +209,3 @@ class CashRegister_MainWindow(object):
         self.calculateButton.setText(_translate("MainWindow", "Close" if self.is_calculate_pressed else 'Buy'))
         self.totalLabel.setText(_translate("MainWindow", "Total price: "))
 
-
-# if __name__ == "__main__":
-#     import sys
-#
-#     JSON_ITEMS = list(json.load(open('cr_items_db.json')))
-#     JSON_SALES = list(json.load(open('cr_sales_db.json')))
-#     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = CashRegister_MainWindow(JSON_ITEMS, JSON_SALES)
-#     ui.setupUi(MainWindow)
-#     MainWindow.show()
-#     sys.exit(app.exec_())

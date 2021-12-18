@@ -1,4 +1,1 @@
-[{"date": "2021-12-20", "items": [{"id": "item_1", "amount": 0}], "total": 0},
-{"date": "2021-12-21", "items": [{"id": "item_1", "amount": 10}, {"id": "item_2", "amount": 10}, {"id": "item_3", "amount": 10}], "total": 0},
-{"date": "2021-12-22", "items": [{"id": "item_1", "amount": 0}], "total": 0},
-{"date": "2021-12-23", "items": [{"id": "item_1", "amount": 0}], "total": 0}]
+[{"date": "2021-12-18", "items": [{"id": "item_1", "amount": 2}], "total": 200}]

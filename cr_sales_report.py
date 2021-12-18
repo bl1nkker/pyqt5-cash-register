@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'cr_sales_report_screen.ui'
+# Form implementation generated from reading ui file '(deprecated)cr_sales_report_screen.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -10,7 +10,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import timedelta, datetime
-import json
 
 
 # Helper functions
@@ -158,34 +157,21 @@ class SalesReport_MainWindow(object):
         self.amountList.clear()
         self.totalList.clear()
         self.itemsList.addItems(list(items_n_amounts.keys()))
-        self.amountList.addItems([str(i) for i in list(items_n_amounts.values())])
-        self.totalList.addItems([str(i) for i in list(items_n_totals.values())])
+        self.amountList.addItems([f'x{i}' for i in list(items_n_amounts.values())])
+        self.totalList.addItems([f'{i}$' for i in list(items_n_totals.values())])
 
         # Set total text label
-        self.totalLabel.setText(f'Total: {str(sum([i for i in list(items_n_totals.values())]))}')
+        self.totalLabel.setText(f'Total: {str(sum([i for i in list(items_n_totals.values())]))}$')
 
     def close_window(self, MainWindow):
         MainWindow.close()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Sales Report"))
         self.dateLabel.setText(_translate("MainWindow", "Date:"))
         self.totalLabel.setText(_translate("MainWindow", "Total:"))
         self.label.setText(_translate("MainWindow", "Items"))
         self.label_2.setText(_translate("MainWindow", "Amount"))
         self.label_3.setText(_translate("MainWindow", "Total"))
         self.closeButton.setText(_translate("MainWindow", "Close"))
-
-
-if __name__ == "__main__":
-    import sys
-
-    JSON_ITEMS = list(json.load(open('cr_items_db.json')))
-    JSON_SALES = list(json.load(open('cr_sales_db.json')))
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = SalesReport_MainWindow(JSON_ITEMS, JSON_SALES)
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
